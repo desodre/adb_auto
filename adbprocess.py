@@ -3,7 +3,7 @@ import os
 import xml.etree.ElementTree as ET
 
 #demorei nisso aqui viu, mizera
-
+#retorna uma lista com os dispositivos conectados 
 def Devices():
     command = ['adb', 'devices']
     result = sb.run(command, capture_output=True, text=True)
@@ -11,7 +11,7 @@ def Devices():
     devices = [line.split('\t')[0] for line in output if line.endswith('\tdevice')]
     return devices
 
-
+#tira screenshot de  todos os dispositivos mencionados
 def Screenshot(devices: list, nome: str):
     for device in devices:
         local = sb.check_output(f"adb -s {device} ls sdcard/DCIM")
@@ -26,11 +26,12 @@ def Screenshot(devices: list, nome: str):
             sb.run(f"adb -s {device} shell mkdir sdcard/DCIM/adbScrenshots")
             sb.run(f"adb -s {device} shell screencap sdcard/DCIM/adbScrenshots/{nome}.png")
             print("Print tirado com sucesso")
-
+#clica em um ponto especifico
 def Click(devices: list, x: int, y: int):
     for device in devices:
         sb.run(f"adb -s {device} shell input tap {x} {y}")
 
+#cria uma pasta com o SN do dispositivo, e cria um txt com suas propriedades
 
 def getDeviceInfos(devices: list):
     for device in devices:
@@ -58,7 +59,8 @@ def getIMEI(devices: list):
 
         with open("window_dump.xml", "r") as arquivo:
             primeira_linha = arquivo.readlines()
-
+#ainda estou procurando por formas de interpretar o arquvio em xml
+        
         root = ET.fromstring(primeira_linha)
         imei1_node = root.find(".//node[@text='IMEI1']")
         imei1 = imei1_node.tail.strip()
